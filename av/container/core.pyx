@@ -184,12 +184,12 @@ cdef class ContainerProxy(object):
             if self.ptr and not self.writeable:
                 lib.avformat_close_input(&self.ptr)
 
-            # Manually free things.
-            else:
-                if self.buffer:
-                    lib.av_freep(&self.buffer)
-                if self.iocontext:
-                    lib.av_freep(&self.iocontext)
+            # In case of custom AVIOContext, self.iocontext will not be closed
+            # in avformat_close_input due to AVFMT_FLAG_CUSTOM_IO flag.
+            # We have to close it manually and free allocated buffer
+            if self.iocontext:
+                lib.av_freep(&self.iocontext.buffer)
+                lib.av_freep(&self.iocontext)
 
     cdef seek(self, int stream_index, lib.int64_t timestamp, str mode, bint backward, bint any_frame):
 

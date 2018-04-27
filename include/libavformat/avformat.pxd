@@ -65,6 +65,9 @@ cdef extern from "libavformat/avformat.pyav.h" nogil:
         int seekable
         int max_packet_size
 
+        int buffer_size
+        unsigned char *buffer
+
     cdef int AVIO_FLAG_DIRECT
     cdef int AVIO_SEEKABLE_NORMAL
     
